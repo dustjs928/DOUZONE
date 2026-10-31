@@ -166,7 +166,7 @@ def period_alignment_evidence(prior_paths, douzone_paths, account_codes, period)
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("명세서 대사")
+        self.title("DOUZONE 자동대차")
         if sys.platform=="win32":
             self.iconbitmap(str(Path(__file__).resolve().parent/"assets"/"app.ico"))
         self.geometry("1280x920")

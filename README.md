@@ -1,10 +1,10 @@
-# 명세서 대사 프로그램
+# DOUZONE 자동대차프로그램
 
 더존 iCUBE의 **당월 미지급금 계정 전표출력 Excel**과 **전월 말 거래처별 미지급금 명세서 Excel**을 대사해 당월 말 명세서 초안을 만들고, 사람이 확인해야 할 예외를 추리는 Windows용 로컬 도구입니다.
 
 ## 시스템 흐름
 
-![Payable Reconciliation 시스템 흐름](docs/payable-reconciliation-architecture.svg)
+![DOUZONE 자동대차프로그램 시스템 흐름](docs/payable-reconciliation-architecture.svg)
 
 [확대해서 보기 (HTML)](docs/payable-reconciliation-architecture.html) · [SVG 원본](docs/payable-reconciliation-architecture.svg)
 
@@ -29,14 +29,12 @@
 
 ## Windows 다운로드
 
-정식 최신 배포의 파일은 다음 두 가지입니다.
+현재 저장소에는 소스코드가 게시되어 있습니다. 실행 파일은 아직 이 저장소에서 배포하지 않습니다.
+사용설명서는 [저장소에서 확인](docs/사용설명서.txt)할 수 있습니다.
 
-- [PayableRecon.zip](https://github.com/hooya92/payable-reconciliation/releases/download/download-latest/PayableRecon.zip) — 압축을 풀면 **PayableRecon.exe + 사용설명서.txt** 두 파일
-- [PayableRecon.exe](https://github.com/hooya92/payable-reconciliation/releases/download/download-latest/PayableRecon.exe) — 실행파일만 필요한 경우
+## 기반 코드
 
-GitHub Release는 한글 이름을 가진 첨부파일을 자동으로 바꿀 수 있으므로, 설명서의 **정확한 한글 파일명은 ZIP 안에 보존**합니다.
-설명서는 [저장소에서도 바로 확인](docs/사용설명서.txt)할 수 있습니다.
-개발 브랜치의 테스트 프로그램은 별도 `month-end-preview` Release에서 제공합니다.
+이 프로젝트는 [hooya92/payable-reconciliation](https://github.com/hooya92/payable-reconciliation)을 기반으로 하며, 원저자의 사용 허락을 받아 DOUZONE 프로젝트로 가져와 수정합니다.
 
 ## 실행
 ```bash
