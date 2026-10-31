@@ -29,8 +29,11 @@
 
 ## Windows 다운로드
 
-현재 저장소에는 소스코드가 게시되어 있습니다. 실행 파일은 아직 이 저장소에서 배포하지 않습니다.
-사용설명서는 [저장소에서 확인](docs/사용설명서.txt)할 수 있습니다.
+개발 도구 없이 사용할 수 있는 Windows 실행 파일을 제공합니다.
+
+- [DOUZONE 자동대차 ZIP 다운로드](https://github.com/dustjs928/DOUZONE/releases/download/download-latest/PayableRecon.zip) — 압축을 풀면 실행 파일과 사용설명서가 들어 있습니다.
+- [실행 파일만 다운로드](https://github.com/dustjs928/DOUZONE/releases/download/download-latest/PayableRecon.exe)
+- [사용설명서 보기](docs/사용설명서.txt)
 
 ## 기반 코드
 
