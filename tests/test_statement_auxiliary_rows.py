@@ -142,6 +142,24 @@ class StatementAuxiliaryRowsTests(unittest.TestCase):
                 wb.close()
             self.assertEqual(prior.read_bytes(),before)
 
+    def test_whitespace_only_template_rows_are_ignored(self):
+        with tempfile.TemporaryDirectory() as folder:
+            prior=Path(folder)/"prior.xlsx";output=Path(folder)/"result.xlsx"
+            write_flat(prior)
+            wb=load_workbook(prior);ws=wb.active
+            ws.append(["   ",None,None,"  ","\t"])
+            wb.save(prior);wb.close()
+            read=read_prior(prior,period=AccountingPeriod(2026,7))
+            self.assertEqual(read.issues,[])
+            write_month_end_statement(output,[prior],
+                [ReconcileResult(Status.UNPAID,item) for item in read.items],[],[],
+                AccountingPeriod(2026,8))
+            wb=load_workbook(output)
+            try:
+                self.assertIn("26.08",wb.sheetnames)
+            finally:
+                wb.close()
+
     def test_dated_or_identified_broken_transactions_remain_errors(self):
         with tempfile.TemporaryDirectory() as folder:
             for code,name,when in ((None,None,"2026-07-31"),("000011","가상A",None)):
