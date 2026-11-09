@@ -48,6 +48,24 @@ def _is_blank_row(values):
                for value in values)
 
 
+def _is_blank_business_row(values, fields):
+    """Ignore rows with no transaction identity or description/amount.
+
+    Some Excel templates leave notes, formulas, or formatting-helper values in
+    unrelated columns. Those must not turn a visually empty transaction row
+    into a malformed transaction.
+    """
+    columns=(fields.get("code"),fields.get("name"),fields.get("date"),
+             fields.get("desc"),fields.get("amount"))
+    for column in columns:
+        if not column:
+            continue
+        value=values[column-1] if column-1 < len(values) else None
+        if value is not None and not (isinstance(value,str) and not value.strip()):
+            return False
+    return True
+
+
 def _change_heading(sheet, header_row, previous, current):
     """Change only recognized previous-month labels above the table header."""
     old_end=date(previous.year,previous.month,calendar.monthrange(previous.year,previous.month)[1])
@@ -172,10 +190,16 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
         auxiliary_columns={"vendor_code":fields["code"],"vendor_name":fields["name"],
                            "date":fields["date"],"description":fields["desc"],
                            "amount":fields["amount"]}
-        auxiliary_rows={
-            row[0].row:kind for row in original.iter_rows(min_row=header+1)
-            if (kind:=_statement_auxiliary_kind([cell.value for cell in row],auxiliary_columns))
-        }
+        auxiliary_rows={}
+        for row in original.iter_rows(min_row=header+1):
+            values=[cell.value for cell in row]
+            kind=_statement_auxiliary_kind(values,auxiliary_columns)
+            if kind is None and _is_blank_business_row(values,fields):
+                # Keep the row out of accounting; it will be discarded when
+                # the template body is rebuilt, not counted as a transaction.
+                kind="blank"
+            if kind:
+                auxiliary_rows[row[0].row]=kind
         grouped,detail_style,subtotal_style,subtotal_label,sample_date=_template_shapes(
             original,header,fields,auxiliary_rows
         )
@@ -207,7 +231,7 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
             if row[0].row in auxiliary_rows:
                 continue
             values=[cell.value for cell in row]
-            if _is_blank_row(values):
+            if _is_blank_row(values) or _is_blank_business_row(values,fields):
                 continue
             if any(_is_summary_label(values[i-1]) for i in (fields["date"],fields["desc"],fields["name"]) if i):
                 continue
@@ -236,7 +260,7 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
             if idx in auxiliary_rows:
                 continue
             values=[cell.value for cell in ws[idx]]
-            if _is_blank_row(values):
+            if _is_blank_row(values) or _is_blank_business_row(values,fields):
                 continue
             summary=any(_is_summary_label(values[col-1]) for col in
                         (fields["date"],fields["desc"],fields["name"]) if col)
