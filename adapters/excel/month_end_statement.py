@@ -42,6 +42,12 @@ def _amount(value):
     return int(value) if value == value.to_integral_value() else float(value)
 
 
+def _is_blank_row(values):
+    """Treat truly empty cells and whitespace-only text as an empty template row."""
+    return all(value is None or (isinstance(value,str) and not value.strip())
+               for value in values)
+
+
 def _change_heading(sheet, header_row, previous, current):
     """Change only recognized previous-month labels above the table header."""
     old_end=date(previous.year,previous.month,calendar.monthrange(previous.year,previous.month)[1])
@@ -103,7 +109,8 @@ def _template_shapes(sheet, header, fields, auxiliary_rows=()):
     for row in sheet.iter_rows(min_row=header+1):
         if row[0].row in auxiliary_rows:
             continue
-        if (row[desc-1].value is not None and row[amount-1].value is not None
+        if (row[desc-1].value not in (None, "") and row[amount-1].value not in (None, "")
+                and not (isinstance(row[desc-1].value,str) and not row[desc-1].value.strip())
                 and not _is_summary_label(row[desc-1].value)):
             if detail is None:
                 detail=row
@@ -200,7 +207,7 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
             if row[0].row in auxiliary_rows:
                 continue
             values=[cell.value for cell in row]
-            if not any(value is not None for value in values):
+            if _is_blank_row(values):
                 continue
             if any(_is_summary_label(values[i-1]) for i in (fields["date"],fields["desc"],fields["name"]) if i):
                 continue
@@ -229,7 +236,7 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
             if idx in auxiliary_rows:
                 continue
             values=[cell.value for cell in ws[idx]]
-            if not any(v is not None for v in values):
+            if _is_blank_row(values):
                 continue
             summary=any(_is_summary_label(values[col-1]) for col in
                         (fields["date"],fields["desc"],fields["name"]) if col)
