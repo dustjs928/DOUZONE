@@ -49,20 +49,28 @@ def _is_blank_row(values):
 
 
 def _is_blank_business_row(values, fields):
-    """Ignore rows with no transaction identity or description/amount.
+    """Ignore visually empty template rows, including rows whose amount formula/value is zero.
 
-    Some Excel templates leave notes, formulas, or formatting-helper values in
-    unrelated columns. Those must not turn a visually empty transaction row
-    into a malformed transaction.
+    A zero amount by itself is not a transaction. A row with any vendor, date,
+    or description data remains a business row and is still validated normally.
     """
-    columns=(fields.get("code"),fields.get("name"),fields.get("date"),
-             fields.get("desc"),fields.get("amount"))
-    for column in columns:
+    identity_columns=(fields.get("code"),fields.get("name"),fields.get("date"),
+                      fields.get("desc"))
+    for column in identity_columns:
         if not column:
             continue
         value=values[column-1] if column-1 < len(values) else None
         if value is not None and not (isinstance(value,str) and not value.strip()):
             return False
+
+    amount_column=fields.get("amount")
+    if amount_column:
+        amount=values[amount_column-1] if amount_column-1 < len(values) else None
+        if amount is None or (isinstance(amount,str) and not amount.strip()):
+            return True
+        if isinstance(amount,(int,float,Decimal)) and not isinstance(amount,bool) and amount==0:
+            return True
+        return False
     return True
 
 
