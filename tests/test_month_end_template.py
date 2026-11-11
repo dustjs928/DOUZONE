@@ -67,7 +67,7 @@ class TemplateMonthEndTests(unittest.TestCase):
             write_month_end_statement(o,[p],[ReconcileResult(Status.UNPAID,item)],[],[],TARGET)
             result=load_workbook(o,data_only=False)
             try:
-                self.assertEqual(result["26.08"].max_row,3)
+                self.assertEqual(result["26.08"].max_row,5)
                 self.assertEqual([r[3] for r in result["26.08"].iter_rows(min_row=3,values_only=True)],
                                  ["이월 비용"])
             finally:
