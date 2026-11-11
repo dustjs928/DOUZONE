@@ -203,9 +203,9 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
             values=[cell.value for cell in row]
             kind=_statement_auxiliary_kind(values,auxiliary_columns)
             if kind is None and _is_blank_business_row(values,fields):
-                # Keep the row out of accounting; it will be discarded when
-                # the template body is rebuilt, not counted as a transaction.
-                kind="blank"
+                # A genuinely empty transaction row is discarded entirely:
+                # it is neither accounting data nor a reference row to preserve.
+                continue
             if kind:
                 auxiliary_rows[row[0].row]=kind
         grouped,detail_style,subtotal_style,subtotal_label,sample_date=_template_shapes(
