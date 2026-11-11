@@ -49,7 +49,7 @@ def write_grouped(path):
 
 
 class TemplateMonthEndTests(unittest.TestCase):
-    def test_zero_only_template_rows_are_ignored_during_statement_generation(self):
+    def test_zero_or_formula_only_template_rows_are_ignored_during_statement_generation(self):
         with tempfile.TemporaryDirectory() as folder:
             p=Path(folder)/"prior.xlsx"
             o=Path(folder)/"draft.xlsx"
@@ -57,7 +57,7 @@ class TemplateMonthEndTests(unittest.TestCase):
             wb=load_workbook(p)
             # Excel templates sometimes carry a zero/formula result far below
             # the visible table, making an otherwise empty row look populated.
-            wb["26.07"]["E451"]=0
+            wb["26.07"]["E451"]="=0"
             wb.save(p)
             item=payable("000011","가상A","이월 비용","100",3)
             write_month_end_statement(o,[p],[ReconcileResult(Status.UNPAID,item)],[],[],TARGET)
