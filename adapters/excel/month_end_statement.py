@@ -208,11 +208,13 @@ def write_month_end_statement(path, prior_paths, results, new_items, issues, per
         auxiliary_rows={}
         for row in original.iter_rows(min_row=header+1):
             values=[cell.value for cell in row]
-            kind=_statement_auxiliary_kind(values,auxiliary_columns)
-            if kind is None and _is_blank_business_row(values,fields):
-                # A genuinely empty transaction row is discarded entirely:
-                # it is neither accounting data nor a reference row to preserve.
+            # Decide whether the row is blank before classifying notes. The
+            # auxiliary-row detector intentionally treats any non-empty cell
+            # as a possible note, including formatting/formula residue in
+            # otherwise unused rows.
+            if _is_blank_business_row(values,fields):
                 continue
+            kind=_statement_auxiliary_kind(values,auxiliary_columns)
             if kind:
                 auxiliary_rows[row[0].row]=kind
         grouped,detail_style,subtotal_style,subtotal_label,sample_date=_template_shapes(
