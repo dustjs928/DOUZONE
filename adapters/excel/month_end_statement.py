@@ -60,7 +60,9 @@ def _is_blank_business_row(values, fields):
         if not column:
             continue
         value=values[column-1] if column-1 < len(values) else None
-        if value is not None and not (isinstance(value,str) and not value.strip()):
+        if (value is not None
+                and not (isinstance(value,str) and
+                         (not value.strip() or value.strip().startswith("=")))):
             return False
 
     amount_column=fields.get("amount")
