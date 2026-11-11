@@ -70,6 +70,11 @@ def _is_blank_business_row(values, fields):
             return True
         if isinstance(amount,(int,float,Decimal)) and not isinstance(amount,bool) and amount==0:
             return True
+        # Excel often leaves formulas such as =IF(...,"",0) or =0 in unused
+        # template rows. With no date/vendor/description, the formula is not
+        # evidence of a transaction and must not block statement generation.
+        if isinstance(amount,str) and amount.strip().startswith("="):
+            return True
         return False
     return True
 
