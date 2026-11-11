@@ -57,6 +57,10 @@ class TemplateMonthEndTests(unittest.TestCase):
             wb=load_workbook(p)
             # Excel templates sometimes carry a zero/formula result far below
             # the visible table, making an otherwise empty row look populated.
+            wb["26.07"]["A451"]='=IF(1=1,"",0)'
+            wb["26.07"]["B451"]='=IF(1=1,"",0)'
+            wb["26.07"]["C451"]='=IF(1=1,"",0)'
+            wb["26.07"]["D451"]='=IF(1=1,"",0)'
             wb["26.07"]["E451"]="=0"
             wb.save(p)
             item=payable("000011","가상A","이월 비용","100",3)
