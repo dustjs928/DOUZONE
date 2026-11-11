@@ -69,7 +69,7 @@ class TemplateMonthEndTests(unittest.TestCase):
             try:
                 self.assertEqual(result["26.08"].max_row,5)
                 self.assertEqual([r[3] for r in result["26.08"].iter_rows(min_row=3,values_only=True)],
-                                 ["이월 비용"])
+                                 ["이월 비용","지급완료","검토 대상"])
             finally:
                 result.close()
 
